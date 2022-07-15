@@ -1,0 +1,4 @@
+/.idea/
+/venv/
+/flatmanagment/media/
+/flatmanagment/db.sqlite3
