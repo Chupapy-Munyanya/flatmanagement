@@ -13,7 +13,7 @@ urlpatterns = [
     path('apartments/', ApartmentsAPIView.as_view()),
     path('apartment/<int:apart_id>/', ApartmentViewAPI.as_view()),
     path('house/<int:house_id>/', HouseAPIView.as_view()),
-    path('flat/<int:house_id>/', FlatsAPIView.as_view()),
-    path('commercial/<int:house_id>/', CommercialsAPIView.as_view()),
-    path('type/<int:house_id>/', FlatTypeAPIView.as_view())
+    path('flats/<int:house_id>/', FlatsAPIView.as_view()),
+    path('commercials/<int:house_id>/', CommercialsAPIView.as_view()),
+    path('types/<int:house_id>/', FlatTypeAPIView.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
