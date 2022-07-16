@@ -3,3 +3,4 @@ djangorestframework~=3.13.1
 django-cors-headers~=3.11.0
 pillow
 psycopg2
+requests

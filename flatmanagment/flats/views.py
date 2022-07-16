@@ -1,12 +1,13 @@
 from django.shortcuts import render, HttpResponse
 
 from django.db.models import Count
-from rest_framework import status
+from rest_framework import authentication, status
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework.views import APIView, Response
+import requests
 
 from .serializers import *
 
@@ -105,3 +106,91 @@ class CommercialsAPIView(ListAPIView):
         return Commercial.objects.filter(house=House.objects.get(pk=house_id))
 
 
+AUTHENTICATION_HEADER_PREFIX = 'Token'
+BASE_URL = 'http://localhost:5000/'
+
+
+def check_auth(request):
+    auth_header = authentication.get_authorization_header(request).split()
+    auth_header_prefix = AUTHENTICATION_HEADER_PREFIX.lower()
+
+    if not auth_header:
+        return
+
+    if len(auth_header) == 1:
+        return
+
+    elif len(auth_header) > 2:
+        return
+
+    prefix = auth_header[0].decode('utf-8')
+    token = auth_header[1].decode('utf-8')
+
+    if prefix.lower() != auth_header_prefix:
+        return
+
+    res = requests.get(headers={'Authorization': f'{prefix} {token}'}, url=BASE_URL+'user/')
+    return res.json()
+
+
+class CreateServiceType(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ServiceTypeSerializer
+
+    def post(self, request):
+        user_data = check_auth(request)
+        if user_data:
+            if user_data['is_staff']:
+                serializer = self.serializer_class(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response(status=status.HTTP_201_CREATED)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ServiceTypesAPIView(ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ServiceTypeSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        return ServiceType.objects.all().order_by('name')
+
+
+class CreateServiceAPIView(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ServiceSerializer
+
+    def post(self, request):
+        user_data = check_auth(request)
+        if user_data:
+            data = request.data
+            data |= {'performer_id': str(user_data['pk'])}
+            serializer = self.serializer_class(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class AllServicesAPIView(ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ServiceSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        return Service.objects.all()
+
+
+class CategoryServicesAPIView(ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ServiceSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        type_id = self.kwargs['type_id']
+        return Service.objects.filter(service_type=ServiceType.objects.get(pk=type_id))

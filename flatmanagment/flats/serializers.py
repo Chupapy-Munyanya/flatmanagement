@@ -72,7 +72,7 @@ class ServiceTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ServiceType
-        fields = ('name', 'description')
+        fields = ('pk', 'name', 'description')
 
 
 class ServiceSerializer(serializers.ModelSerializer):
