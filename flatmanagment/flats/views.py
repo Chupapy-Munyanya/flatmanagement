@@ -74,7 +74,17 @@ class HouseAPIView(APIView):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
-class FlatAPIView(ListAPIView):
+class FlatTypeAPIView(ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = FlatTypeSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        house_id = self.kwargs['house_id']
+        return FlatType.objects.filter(house=House.objects.get(pk=house_id))
+
+
+class FlatsAPIView(ListAPIView):
     permission_classes = (AllowAny,)
     serializer_class = FlatSerializer
     pagination_class = LimitOffsetPagination
@@ -84,7 +94,7 @@ class FlatAPIView(ListAPIView):
         return Flat.objects.filter(house=House.objects.get(pk=house_id))
 
 
-class CommercialAPIView(ListAPIView):
+class CommercialsAPIView(ListAPIView):
     permission_classes = (AllowAny,)
     serializer_class = FlatSerializer
     pagination_class = LimitOffsetPagination
