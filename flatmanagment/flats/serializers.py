@@ -14,6 +14,7 @@ class HouseSerializer(serializers.ModelSerializer):
 
 class ApartmentSerializer(serializers.ModelSerializer):
     houses = HouseSerializer(many=True, read_only=True)
+    builder = serializers.StringRelatedField()
 
     class Meta:
         model = Apartment
