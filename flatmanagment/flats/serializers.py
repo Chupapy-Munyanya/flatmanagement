@@ -18,7 +18,7 @@ class ApartmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Apartment
-        fields = ('name', 'builder', 'descr', 'houses')
+        fields = ('name', 'builder', 'image', 'descr', 'houses')
 
 
 class BuildingCompanySerializer(serializers.ModelSerializer):
