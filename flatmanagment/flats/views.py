@@ -50,6 +50,7 @@ class ApartmentViewAPI(APIView):
             'name': apart.name,
             'image': apart.image.url,
             'descr': apart.descr,
+            'builder': apart.builder.name,
             'houses': []
         }
         for house in houses:
