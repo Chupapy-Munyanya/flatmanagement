@@ -139,7 +139,7 @@ class CreateServiceType(APIView):
 
     def post(self, request):
         user_data = check_auth(request)
-        if user_data:
+        if user_data.get("pk"):
             if user_data['is_staff']:
                 serializer = self.serializer_class(data=request.data)
                 serializer.is_valid(raise_exception=True)
@@ -166,7 +166,7 @@ class CreateServiceAPIView(APIView):
 
     def post(self, request):
         user_data = check_auth(request)
-        if user_data:
+        if user_data.get("pk"):
             data = request.data
             data |= {'performer_id': str(user_data['pk'])}
             serializer = self.serializer_class(data=data)
@@ -194,3 +194,50 @@ class CategoryServicesAPIView(ListAPIView):
     def get_queryset(self):
         type_id = self.kwargs['type_id']
         return Service.objects.filter(service_type=ServiceType.objects.get(pk=type_id))
+
+
+class UserPlacementsAPIView(ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = PlacementSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return Placement.objects.filter(owner_id=user_id)
+
+
+class DealStatusAPIView(ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = DealStatusSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        return DealStatus.objects.all()
+
+
+class CreateDealAPIView(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = DealSerializer
+
+    def post(self, request):
+        user_data = check_auth(request)
+        if user_data.get("pk"):
+            data = request.data
+            data |= {'user_id': str(user_data['pk'])}
+            serializer = self.serializer_class(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class UpdateDealStatusAPI(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        data = request.data
+        deal = Deal.objects.get(pk=data["pk"])
+        deal.status = DealStatus.objects.get(pk=data["status_id"])
+        deal.save(updated_fields=['status'])
+        return Response(status=status.HTTP_200_OK)

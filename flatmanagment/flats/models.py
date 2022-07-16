@@ -95,13 +95,9 @@ class DealStatus(models.Model):
         return self.name
 
 
-class Basket(models.Model):
-    user_id = models.IntegerField()
-
-
 class Deal(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     placement = models.ForeignKey(Placement, on_delete=models.CASCADE)
     status = models.ForeignKey(DealStatus, on_delete=models.SET_NULL, null=True)
-    basket = models.ForeignKey(Basket, on_delete=models.SET_NULL, null=True)
+    user_id = models.IntegerField()
     dt = models.DateTimeField()

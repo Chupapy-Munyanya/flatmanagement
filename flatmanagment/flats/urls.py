@@ -21,4 +21,8 @@ urlpatterns = [
     path('createservice/', CreateServiceAPIView.as_view()),
     path('services/<int:type_id>/', CategoryServicesAPIView.as_view()),
     path('services/', AllServicesAPIView.as_view()),
+    path('userplacements/<int:user_id>/', UserPlacementsAPIView.as_view()),
+    path('dealstatuses/', DealStatusAPIView.as_view()),
+    path('createdeal/', CreateDealAPIView.as_view()),
+    path('updatedeal/', UpdateDealStatusAPI.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -41,7 +41,7 @@ class PlacementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Placement
-        fields = ('number', 'floor', 'owner_id')
+        fields = ('pk', 'number', 'floor', 'owner_id')
 
 
 class FlatTypeSerializer(serializers.ModelSerializer):
@@ -81,21 +81,28 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Service
-        fields = ('performer_id', 'price', 'description', 'service_type')
+        fields = ('pk', 'performer_id', 'price', 'description', 'service_type')
 
 
 class DealStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DealStatus
-        fields = ('name',)
+        fields = ('pk', 'name',)
 
 
-class DealSerializer(serializers.ModelSerializer):
-    # service = serializers.StringRelatedField()
-    # placement = PlacementSerializer
-    # status = serializers.StringRelatedField()
+class ViewDealSerializer(serializers.ModelSerializer):
+    service = serializers.StringRelatedField()
+    placement = PlacementSerializer
+    status = serializers.StringRelatedField()
 
     class Meta:
         model = Deal
-        fields = ('service', 'placement', 'status', 'dt')
+        fields = ('service', 'placement', 'status', 'user_id', 'dt')
+
+
+class DealSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Deal
+        fields = ('service', 'placement', 'status', 'user_id', 'dt')
