@@ -24,5 +24,6 @@ urlpatterns = [
     path('userplacements/<int:user_id>/', UserPlacementsAPIView.as_view()),
     path('dealstatuses/', DealStatusAPIView.as_view()),
     path('createdeal/', CreateDealAPIView.as_view()),
-    path('updatedeal/', UpdateDealStatusAPI.as_view())
+    path('updatedeal/', UpdateDealStatusAPI.as_view()),
+    path('deals/user/<int:user_id>/', UserDealsAPIView.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

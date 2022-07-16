@@ -241,3 +241,13 @@ class UpdateDealStatusAPI(APIView):
         deal.status = DealStatus.objects.get(pk=data["status_id"])
         deal.save(updated_fields=['status'])
         return Response(status=status.HTTP_200_OK)
+
+
+class UserDealsAPIView(ListAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = DealSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return Deal.object.filter(user_id=user_id)
